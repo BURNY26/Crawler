@@ -1,0 +1,18 @@
+﻿<UserControl 
+    x:Class="EbayCrawlerWPF.Pages.Crawler.View.CrawlerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    mc:Ignorable="d"
+    d:DesignHeight="540" 
+    d:DesignWidth="960"
+    DataContext="{Binding CrawlerVM, Source={StaticResource Locator}}"
+    Background="White"
+    >
+
+    <Grid>
+        <TextBlock Text="hier komt de ui om crawls te runnen" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+
+</UserControl>

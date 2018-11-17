@@ -1,0 +1,79 @@
+﻿<Window 
+    x:Class="EbayCrawlerWPF.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    mc:Ignorable="d"
+    Title="Ebay Crawler"
+    Height="540" 
+    Width="960"
+    DataContext="{Binding MainVM, Source={StaticResource Locator}}"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"   
+    >
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="32"/>
+            </Grid.ColumnDefinitions>
+            <TabControl 
+            Name="MainNavigationTabControl"
+            Grid.Row="0"
+            DataContext="{Binding PageNavigatorVM, Source={StaticResource Locator}}"
+            SelectedIndex="{Binding SelectedTabIndex, Mode=OneWay}"
+            >
+
+                <TabItem Header="Home" Height="30"/>
+                <TabItem Header="Crawler" Height="30"/>
+                <TabItem Header="Filter data" Height="30"/>
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand}" CommandParameter="{Binding ElementName=MainNavigationTabControl, Path=SelectedIndex}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TabControl>
+
+            <Button
+                Margin="2"
+                Grid.Column="1"
+                Command="{Binding ShowSettingsWindowCommand}"
+                >
+                <Button.Content>
+                    <fa:ImageAwesome Icon="Wrench" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
+                </Button.Content>
+            </Button>
+        </Grid> 
+
+        <Button
+            Width="70" 
+            HorizontalAlignment="Right"
+            Content="Run Crawl" 
+            Click="OnRunCrawlButtonClick"
+            Margin="0,2,35,2"
+            />
+
+        <ContentControl
+            Name="ContentControl"
+            Grid.Row="1"
+            DataContext="{Binding PageNavigatorVM, Source={StaticResource Locator}}"
+            Content="{Binding CurrentPage, Mode=OneWay}"
+            />
+    </Grid>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+</Window>
