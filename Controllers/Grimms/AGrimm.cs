@@ -1,13 +1,9 @@
-﻿using EbayCrawlerWPF.Controllers.TextExtractors;
-using EbayCrawlerWPF.model;
+﻿using EbayCrawlerWPF.model;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EbayCrawlerWPF.Controllers.Grimms
 {
@@ -15,9 +11,9 @@ namespace EbayCrawlerWPF.Controllers.Grimms
     {
         protected Goblin _goblin;
         //ebayitems / keywords
-        protected Dictionary<String,List<EbayItem>> _itemsList;
+        protected Dictionary<String, List<EbayItem>> _itemsList;
         //links / keywords
-        protected Dictionary<String,List<String>> _urls;
+        protected Dictionary<String, List<String>> _urls;
         public abstract List<EbayItem> CreateItems(String filename);
         //er is iets speciaal aan de volgende x items opvragen van ebay ,wnr je de skc param wijzigt krijg je de volgende 50 items
         protected abstract string NextPage(string url, int current);
@@ -27,7 +23,11 @@ namespace EbayCrawlerWPF.Controllers.Grimms
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(htmlcontent);
-            using (StreamWriter file = new StreamWriter(Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.GetType().Name), filename)))
+
+            string grimmBaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.GetType().Name);
+            Directory.CreateDirectory(grimmBaseDirectory); // Creates the directory if it does not yet exists
+
+            using (StreamWriter file = new StreamWriter(Path.Combine(grimmBaseDirectory, filename)))
             {
                 file.WriteLine(doc.Text);
             }
@@ -36,7 +36,7 @@ namespace EbayCrawlerWPF.Controllers.Grimms
         public Dictionary<String, List<String>> FetchUrls()
         {
             Dictionary<String, List<String>> map = new Dictionary<String, List<String>>();
-            String s = File.ReadAllText(Properties.Resources.urls);
+            String s = File.ReadAllText(Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content"), "sites.json"));
             dynamic stuff = JsonConvert.DeserializeObject(s);
             foreach (dynamic request in stuff[this.GetType().Name])
             {
@@ -82,7 +82,7 @@ namespace EbayCrawlerWPF.Controllers.Grimms
                     foreach (String s in entry.Value)
                     {
                         String starturl = s;
-                        while (starturl != null && checkingPageIndex != lastpage+1)
+                        while (starturl != null && checkingPageIndex != lastpage + 1)
                         {
                             Console.WriteLine(this.GetType().Name + " checking " + starturl);
 
@@ -90,7 +90,7 @@ namespace EbayCrawlerWPF.Controllers.Grimms
                             string content = _goblin.FetchHtml(starturl); //blocking call(?)
 
                             CreateDocument(content, filename);
-                            Console.WriteLine("before adding : " +list.Count);
+                            Console.WriteLine("before adding : " + list.Count);
                             list.AddRange(CreateItems(filename));
                             Console.WriteLine("after adding : " + list.Count);
                             Console.WriteLine(this.GetType().Name + " finished reading page " + checkingPageIndex);
