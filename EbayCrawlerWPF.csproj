@@ -89,6 +89,7 @@
     <Compile Include="Controllers\Settings\SettingsController.cs" />
     <Compile Include="Controllers\TextExtractors\TextExtractorEbay.cs" />
     <Compile Include="Controllers\TextExtractors\TextExtractorEbayCoUk.cs" />
+    <Compile Include="DataAccess\XmlDataAccess.cs" />
     <Compile Include="Messages\CloseSettingsWindowMessage.cs" />
     <Compile Include="Messages\NavigatePageMessage.cs" />
     <Compile Include="Messages\SearchMessage.cs" />
@@ -100,6 +101,9 @@
     <Compile Include="Controllers\Grimms\EbayComGrimm.cs" />
     <Compile Include="Controllers\Grimms\EbayCoUkGrimm.cs" />
     <Compile Include="Model\Helper.cs" />
+    <Compile Include="Model\SearchKeyword.cs" />
+    <Compile Include="Model\SearchRequest.cs" />
+    <Compile Include="Model\SerializableDictionary.cs" />
     <Compile Include="Pages\Crawler\ViewModel\CrawlerVM.cs" />
     <Compile Include="Pages\Crawler\View\CrawlerView.xaml.cs">
       <DependentUpon>CrawlerView.xaml</DependentUpon>
@@ -499,7 +503,6 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
-    <None Include="Content\sites.json" />
     <None Include="packages.config" />
     <None Include="packages\CommonServiceLocator.2.0.2\CommonServiceLocator.2.0.2.nupkg" />
     <None Include="packages\FontAwesome.4.7.0\Content\fonts\fontawesome-webfont.eot" />
@@ -543,7 +546,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataAccess\" />
     <Folder Include="Pages\ItemDetails\ViewModel\" />
     <Folder Include="Pages\ItemDetails\View\" />
   </ItemGroup>

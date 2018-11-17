@@ -9,15 +9,12 @@ namespace EbayCrawlerWPF
 
         public MainWindow()
         {
-            //InitializeComponent();
-            
+            InitializeComponent();
+
             if (_director == null)
             {
                 _director = new Director();
             }
-
-            _director.Boot();
-
         }
 
         private void OnRunCrawlButtonClick(object sender, RoutedEventArgs e)
@@ -28,7 +25,6 @@ namespace EbayCrawlerWPF
             }
 
             _director.Boot();
-            //_director.ExportHtmlToCsv("ebay191bug.html", "slechteitems.csv");
         }
     }
 }
