@@ -2,6 +2,11 @@
 {
     public class ApplicationSettings
     {
+        public string DatabaseUrl
+        {
+            get; set;
+        }
+
         public string DatabaseName
         {
             get; set;

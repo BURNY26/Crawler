@@ -32,6 +32,19 @@ namespace EbayCrawlerWPF.Pages.SettingsPanel.ViewModel
             }
         }
 
+        public string DatabaseUrl
+        {
+            get
+            {
+                return SettingsController.Settings.DatabaseUrl;
+            }
+            set
+            {
+                SettingsController.Settings.DatabaseUrl = value;
+                OnPropertyChanged(nameof(DatabaseUrl));
+            }
+        }
+
         public string DatabaseUsername
         {
             get

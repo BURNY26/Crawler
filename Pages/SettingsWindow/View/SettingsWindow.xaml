@@ -17,6 +17,7 @@
             <RowDefinition Height="24"/>
             <RowDefinition Height="24"/>
             <RowDefinition Height="24"/>
+            <RowDefinition Height="24"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -24,14 +25,17 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="DatabaseName" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DatabaseName}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="DatabaseUrl" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DatabaseUrl}" VerticalAlignment="Center"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="DatabaseUsername" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DatabaseUsername}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="DatabaseName" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DatabaseName}" VerticalAlignment="Center"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="DatabasePassword" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DatabasePassword}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="DatabaseUsername" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DatabaseUsername}" VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="DatabasePassword" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DatabasePassword}" VerticalAlignment="Center"/>
 
         <Button Command="{Binding SaveButtonClickCommand}" Grid.Row="9999" Grid.Column="2" Height="20" Width="46" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="save"/>
     </Grid>

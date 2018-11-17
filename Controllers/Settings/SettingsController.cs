@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Xml;
 using EbayCrawlerWPF.Model;
-using System.Xml.Serialization;
+using EbayCrawlerWPF.DataAccess;
 
 namespace EbayCrawlerWPF.Controllers.Settings
 {
     public static class SettingsController
     {
+        private static bool _isInited = false;
         private static string _settingsXmlFilePath;
 
         private static ApplicationSettings _settings;
@@ -15,19 +15,30 @@ namespace EbayCrawlerWPF.Controllers.Settings
         {
             get
             {
+                if (!_isInited)
+                {
+                    Init();
+                }
+
                 return _settings;
             }
             set
             {
+                if (value == _settings)
+                {
+                    return;
+                }
+
                 _settings = value;
             }
         }
 
-
-        public static void Init()
+        private static void Init()
         {
             SetFilePath();
             ReadSettings();
+
+            _isInited = true;
         }
 
         private static void SetFilePath()
@@ -38,32 +49,15 @@ namespace EbayCrawlerWPF.Controllers.Settings
             _settingsXmlFilePath = Path.Combine(directoryPath, "settings.xml");
         }
 
-        public static void ReadSettings()
+        private static void ReadSettings()
         {
-            Settings = ReadXmlFile<ApplicationSettings>(_settingsXmlFilePath);
+            Settings = XmlDataAccess.ReadXmlFile<ApplicationSettings>(_settingsXmlFilePath);
         }
 
         public static void SaveSettings()
         {
-            WriteToXml(Settings, _settingsXmlFilePath);
+            XmlDataAccess.WriteToXml(Settings, _settingsXmlFilePath);
             Console.WriteLine(_settingsXmlFilePath);
-        }
-
-        private static T ReadXmlFile<T>(string filepath)
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-            using (FileStream fileStream = new FileStream(filepath, FileMode.Open))
-            {
-                return (T)serializer.Deserialize(fileStream);
-            }
-        }
-
-        private static void WriteToXml(object objectToSerialize, string filepath)
-        {
-            using (XmlWriter xmlWriter = XmlWriter.Create(filepath, new XmlWriterSettings { Indent = true, OmitXmlDeclaration = true }))
-            {
-                new XmlSerializer(objectToSerialize.GetType()).Serialize(xmlWriter, objectToSerialize, new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }));
-            }
         }
     }
 }

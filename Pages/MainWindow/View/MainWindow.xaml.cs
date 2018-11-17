@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using EbayCrawlerWPF.Model;
+using EbayCrawlerWPF.Controllers.Settings;
 
 namespace EbayCrawlerWPF
 {
