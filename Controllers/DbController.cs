@@ -195,7 +195,10 @@ namespace EbayCrawlerWPF.Model
             string uid = "lienesv171_crawler";
             string password = "123456789";
             */
-
+            string server = "192.168.1.2";
+            string database = "lootcrate";
+            string uid = "lienert";
+            string password = "wachtwoord";
             string connectionString;
             connectionString = "SERVER=" + SettingsController.Settings.DatabaseUrl + ";" + "DATABASE=" +
             SettingsController.Settings.DatabaseName + ";" + "UID=" + SettingsController.Settings.DatabaseUsername + ";" + "PASSWORD=" + SettingsController.Settings.DatabasePassword + ";";
