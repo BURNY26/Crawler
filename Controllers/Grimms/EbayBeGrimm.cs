@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using EbayCrawlerWPF.Controllers.Grimms;
 using Newtonsoft.Json;
 using EbayCrawlerWPF.Model;
+using EbayCrawlerWPF.Controllers;
 
 namespace EbayCrawlerWPF.model
 {
@@ -15,8 +16,9 @@ namespace EbayCrawlerWPF.model
 
         private static EbayBeGrimm _grim;        
 
-        private EbayBeGrimm()
+        private EbayBeGrimm(SearchRequestHandler handler)
         {
+            _handler = handler;
             _goblin = new Goblin();
             _itemsList = new Dictionary<String, List<EbayItem>>();
             _urls = FetchUrls();
@@ -55,9 +57,9 @@ namespace EbayCrawlerWPF.model
             return list;            
         }
 
-        public static EbayBeGrimm GetInstance()
+        public static EbayBeGrimm GetInstance(SearchRequestHandler handler)
         {
-            _grim = new EbayBeGrimm();
+            _grim = new EbayBeGrimm(handler);
             return _grim;
         }
 
