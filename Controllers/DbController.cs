@@ -3,6 +3,7 @@ using System.Linq;
 using EbayCrawlerWPF.model;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
+using EbayCrawlerWPF.Controllers.Settings;
 
 namespace EbayCrawlerWPF.Model
 {
@@ -113,7 +114,7 @@ namespace EbayCrawlerWPF.Model
             //geval 2 ,zowel titel ,startprice als imageurl zijn gelijk
             //
 
-            string query = "select * from lootcrate.ebay where itemid='"+ei.ItemID+"' ;";
+            string query = "select * from lootcrate.ebay where itemid='" + ei.ItemID + "' ;";
             MySqlConnection conn = EstablishConn();
             MySqlCommand comm = new MySqlCommand(query, conn);
 
@@ -140,10 +141,12 @@ namespace EbayCrawlerWPF.Model
 
         public static MySqlConnection EstablishConn()
         {
+            /*
             string server = "localhost";
             string database = "lootcrate";
             string uid = "lienert";
             string password = "wachtwoord";
+            */
 
             /*
             string server = "185.182.56.105";
@@ -151,9 +154,10 @@ namespace EbayCrawlerWPF.Model
             string uid = "lienesv171_crawler";
             string password = "123456789";
             */
+
             string connectionString;
-            connectionString = "SERVER=" + server + ";" + "DATABASE=" +
-            database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+            connectionString = "SERVER=" + SettingsController.Settings.DatabaseUrl + ";" + "DATABASE=" +
+            SettingsController.Settings.DatabaseName + ";" + "UID=" + SettingsController.Settings.DatabaseUsername + ";" + "PASSWORD=" + SettingsController.Settings.DatabasePassword + ";";
 
             MySqlConnection conn = new MySqlConnection(connectionString);
             conn.Open();
@@ -173,7 +177,8 @@ namespace EbayCrawlerWPF.Model
                 MySqlCommand comm = new MySqlCommand(query, conn);
                 comm.ExecuteNonQuery();
                 conn.Close();
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 conn.Close();
                 Console.WriteLine(e.Message);
@@ -187,7 +192,7 @@ namespace EbayCrawlerWPF.Model
         public static int AddEbayItemsToDB(List<EbayItem> list)
         {
             String query;
-            
+
             Console.WriteLine("Writing items to DB");
             int teller = 0;
             //Console.WriteLine("Length list is : "+list.Count);
@@ -201,7 +206,7 @@ namespace EbayCrawlerWPF.Model
                                  "values ('" + ei.ItemID + "','" + ei.Title + "','" + ei.Url + "','"
                                              + (Int32)ei.Startprice + "','" + (Int32)ei.Endprice + "','"
                                              + ei.Date.ToString("yyyy-MM-dd HH:mm") + "','" + ei.Followers + "','"
-                                             + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "','" + (Int32) ei.Shipping + "','" + ei.Location+ "','" + ei.PictureUrl + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "');";
+                                             + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "','" + (Int32)ei.Shipping + "','" + ei.Location + "','" + ei.PictureUrl + "','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "');";
                         //Console.WriteLine(query);
                         MySqlConnection conn = EstablishConn();
                         MySqlCommand comm = new MySqlCommand(query, conn);
@@ -221,7 +226,7 @@ namespace EbayCrawlerWPF.Model
                                                     + "',followers='" + ei.Followers
                                                     + "', updated_at='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm")
                                                     + "',imageurl='" + ei.PictureUrl
-                                                    + "' where itemid='"+ei.ItemID+"';";
+                                                    + "' where itemid='" + ei.ItemID + "';";
                         MySqlConnection conn = EstablishConn();
                         MySqlCommand comm = new MySqlCommand(query, conn);
 

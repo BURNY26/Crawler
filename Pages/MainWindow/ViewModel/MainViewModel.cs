@@ -2,7 +2,6 @@ using GalaSoft.MvvmLight;
 using EbayCrawlerWPF.Messages;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using EbayCrawlerWPF.Controllers.Settings;
 using EbayCrawlerWPF.Pages.SettingsPanel.View;
 
 namespace EbayCrawlerWPF.ViewModel
@@ -27,8 +26,6 @@ namespace EbayCrawlerWPF.ViewModel
             ShowSettingsWindowCommand = new RelayCommand(() => OnShowSettingsWindow());
 
             Messenger.Default.Register<CloseSettingsWindowMessage>(this, (o) => OnCloseSettingsWindowMessage(o));
-
-            SettingsController.Init();
         }
 
         private void OnWindowLoaded()

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -19,7 +14,7 @@ namespace EbayCrawlerWPF.DataAccess
             }
         }
 
-        public static object ReadFromXml<T>(string filepath)
+        public static T ReadXmlFile<T>(string filepath)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             using (FileStream fileStream = new FileStream(filepath, FileMode.Open))

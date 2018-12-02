@@ -62,7 +62,7 @@
         <!-- DATAGRID -->
         <DataGrid
             Grid.Row="1"
-            ItemsSource="{Binding Path=EntityCollection}">
+            ItemsSource="{Binding Path=EntityCollection}" Margin="0,2,0,0">
         </DataGrid>
 
     </Grid>
