@@ -1,13 +1,13 @@
 ﻿using System;
 using EbayCrawlerWPF.model;
 using System.Configuration;
-using EbayCrawlerWPF.AppConfig;
 using System.Diagnostics;
-using static EbayCrawlerWPF.AppConfig.SitesSection;
 using System.Resources;
 using System.Reflection;
 using System.Collections.Generic;
 using EbayCrawlerWPF.Controllers.Grimms;
+using System.IO;
+using EbayCrawlerWPF.Controllers;
 
 namespace EbayCrawlerWPF.Model
 {
@@ -18,11 +18,15 @@ namespace EbayCrawlerWPF.Model
 
         public Director()
         {
-            _grimms = new List<AGrimm>();
-            _grimms.Add(EbayBeGrimm.GetInstance());
-            _grimms.Add(EbayCoUkGrimm.GetInstance());
-            _grimms.Add(EbayComGrimm.GetInstance());
             _numberOfPagesToFetch = int.Parse(EbayCrawlerWPF.Properties.Resources.amountofpages);
+            string directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EbayCrawler");
+            string filepath = Path.Combine(directoryPath, EbayCrawlerWPF.Properties.Resources.requestsfile);
+            _grimms = new List<AGrimm>();
+            SearchRequestHandler sr = new SearchRequestHandler(filepath);
+            _grimms.Add(EbayBeGrimm.GetInstance(sr));
+            _grimms.Add(EbayCoUkGrimm.GetInstance(sr));
+            _grimms.Add(EbayComGrimm.GetInstance(sr));
+            sr.ShowHits();
         }
 
         public void Boot()

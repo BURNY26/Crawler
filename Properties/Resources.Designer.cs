@@ -61,7 +61,7 @@ namespace EbayCrawlerWPF.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 199.
+        ///   Looks up a localized string similar to 50.
         /// </summary>
         internal static string amountofpages {
             get {
@@ -93,6 +93,15 @@ namespace EbayCrawlerWPF.Properties {
         internal static string nodecontent {
             get {
                 return ResourceManager.GetString("nodecontent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to serializedobj.xml.
+        /// </summary>
+        internal static string requestsfile {
+            get {
+                return ResourceManager.GetString("requestsfile", resourceCulture);
             }
         }
         

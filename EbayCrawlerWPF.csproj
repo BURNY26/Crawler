@@ -84,8 +84,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppConfig\SitesSection.cs" />
     <Compile Include="Controllers\Grimms\AGrimm.cs" />
+    <Compile Include="Controllers\SearchRequestHandler.cs" />
     <Compile Include="Controllers\Settings\SettingsController.cs" />
     <Compile Include="Controllers\TextExtractors\TextExtractorEbay.cs" />
     <Compile Include="Controllers\TextExtractors\TextExtractorEbayCoUk.cs" />
@@ -96,12 +96,13 @@
     <Compile Include="Controllers\CsvController.cs" />
     <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Model\ApplicationSettings.cs" />
+    <Compile Include="Model\ArrayOfJsonurl.cs" />
     <Compile Include="Model\Director.cs" />
     <Compile Include="Controllers\Grimms\EbayBeGrimm.cs" />
     <Compile Include="Controllers\Grimms\EbayComGrimm.cs" />
     <Compile Include="Controllers\Grimms\EbayCoUkGrimm.cs" />
     <Compile Include="Model\Helper.cs" />
-    <Compile Include="Model\SearchKeyword.cs" />
+    <Compile Include="Model\Jsonurl.cs" />
     <Compile Include="Model\SearchRequest.cs" />
     <Compile Include="Model\SerializableDictionary.cs" />
     <Compile Include="Pages\Crawler\ViewModel\CrawlerVM.cs" />

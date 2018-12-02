@@ -28,7 +28,7 @@ namespace EbayCrawlerWPF.ViewModel
 
             Messenger.Default.Register<CloseSettingsWindowMessage>(this, (o) => OnCloseSettingsWindowMessage(o));
 
-            SettingsController.Init();
+            //SettingsController.Init();
         }
 
         private void OnWindowLoaded()

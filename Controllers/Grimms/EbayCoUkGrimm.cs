@@ -1,4 +1,5 @@
-﻿using EbayCrawlerWPF.Controllers.Grimms;
+﻿using EbayCrawlerWPF.Controllers;
+using EbayCrawlerWPF.Controllers.Grimms;
 using EbayCrawlerWPF.Controllers.TextExtractors;
 using EbayCrawlerWPF.model;
 using HtmlAgilityPack;
@@ -15,8 +16,9 @@ namespace EbayCrawlerWPF.Model
 
         private static EbayCoUkGrimm _grim;
 
-        public EbayCoUkGrimm()
+        public EbayCoUkGrimm(SearchRequestHandler handler)
         {
+            _handler = handler;
             _goblin = new Goblin();
             _itemsList = new Dictionary<String,List<EbayItem>>();
             _urls   = FetchUrls();
@@ -106,9 +108,9 @@ namespace EbayCrawlerWPF.Model
             return list;
         }
 
-        public static EbayCoUkGrimm GetInstance()
+        public static EbayCoUkGrimm GetInstance(SearchRequestHandler handler)
         {
-            _grim = new EbayCoUkGrimm();
+            _grim = new EbayCoUkGrimm(handler);
             return _grim;
         }
 

@@ -9,6 +9,7 @@ namespace EbayCrawlerWPF.Controllers.Grimms
 {
     public abstract class AGrimm
     {
+        protected SearchRequestHandler _handler;
         protected Goblin _goblin;
         //ebayitems / keywords
         protected Dictionary<String, List<EbayItem>> _itemsList;
@@ -36,7 +37,8 @@ namespace EbayCrawlerWPF.Controllers.Grimms
         public Dictionary<String, List<String>> FetchUrls()
         {
             Dictionary<String, List<String>> map = new Dictionary<String, List<String>>();
-            String s = File.ReadAllText(Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content"), "sites.json"));
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EbayCrawler");
+            String s = File.ReadAllText(Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EbayCrawler"),"Links"), "sites.json"));
             dynamic stuff = JsonConvert.DeserializeObject(s);
             foreach (dynamic request in stuff[this.GetType().Name])
             {
@@ -89,18 +91,17 @@ namespace EbayCrawlerWPF.Controllers.Grimms
                             string filename = string.Format("ebay{0}.html", checkingPageIndex);
                             string content = _goblin.FetchHtml(starturl); //blocking call(?)
 
-                            CreateDocument(content, filename);
-                            Console.WriteLine("before adding : " + list.Count);
+                            CreateDocument(content, filename);                            
                             list.AddRange(CreateItems(filename));
-                            Console.WriteLine("after adding : " + list.Count);
+                            _handler.ProcessResults(list, key);
                             Console.WriteLine(this.GetType().Name + " finished reading page " + checkingPageIndex);
                             starturl = NextPage(starturl, checkingPageIndex);
                             checkingPageIndex++;
                         }
                     }
-                    Console.WriteLine("after finish url : " + list.Count);
                     checkingPageIndex = 1;
                     _itemsList.Add(key, list);
+                    
                 }
             }
             catch (Exception e)

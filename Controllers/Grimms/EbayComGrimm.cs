@@ -6,6 +6,7 @@ using EbayCrawlerWPF.model;
 using EbayCrawlerWPF.ViewModel;
 using System.Collections.Generic;
 using EbayCrawlerWPF.Controllers.Grimms;
+using EbayCrawlerWPF.Controllers;
 
 namespace EbayCrawlerWPF.Model
 {
@@ -13,8 +14,9 @@ namespace EbayCrawlerWPF.Model
     {
         private static EbayComGrimm _grim;
 
-        public EbayComGrimm()
+        public EbayComGrimm(SearchRequestHandler handler)
         {
+            _handler = handler;
             _goblin = new Goblin();
             _itemsList = new Dictionary<String, List<EbayItem>>();
             _urls = FetchUrls();
@@ -116,9 +118,9 @@ namespace EbayCrawlerWPF.Model
             return (node.SelectSingleNode("div/div[2]/a")).Attributes["href"].DeEntitizeValue;
         }
 
-        public static EbayComGrimm GetInstance()
+        public static EbayComGrimm GetInstance(SearchRequestHandler handler)
         {
-            _grim = new EbayComGrimm();
+            _grim = new EbayComGrimm(handler);
             return _grim;
         }
 

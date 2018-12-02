@@ -11,8 +11,50 @@ namespace EbayCrawlerWPF.Model
 
         public static List<EbayItem> ImportFromDB()
         {
-            return null;
+            MySqlConnection conn = EstablishConn();
+            List<EbayItem> list = new List<EbayItem>();
+
+            string query = "select * from lootcrate.ebay;";
+            Console.WriteLine(query);
+            MySqlCommand comm = new MySqlCommand(query, conn);
+            comm.CommandTimeout = 0;
+            MySqlDataReader dataReader = comm.ExecuteReader();
+            Boolean hasrows = dataReader.HasRows;
+
+            if (hasrows == false)
+            {
+                dataReader.Close();
+                conn.Close();
+                return null;
+            }
+            else
+            {
+                while (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        string itemid = dataReader.GetString(0);
+                        string title = dataReader.GetString(1);
+                        int followers = dataReader.GetInt32(2);
+                        double startprice = dataReader.GetDouble(3);
+                        double endprice = dataReader.GetDouble(4);
+                        string itemurl = dataReader.GetString(5);
+                        double shipping = dataReader[6] as double? ?? default(double);
+                        string location = dataReader[7] as string;
+                        DateTime clock = dataReader[8] as DateTime? ?? default(DateTime);
+                        DateTime created_at = dataReader[9] as DateTime? ?? default(DateTime);
+                        DateTime updated_at = dataReader[10] as DateTime? ?? default(DateTime);
+                        string imageurl = dataReader[11] as string;
+                        list.Add(new EbayItem(startprice, endprice, title, itemurl, itemid, clock, followers, shipping, location, imageurl));
+                    }
+                    dataReader.NextResult();
+                }
+            }
+            dataReader.Close();
+            conn.Close();
+            return list;
         }
+        
 
         public static string BuildQueryLikeKeywords(bool substr, List<string> keywords)
         {
@@ -140,24 +182,30 @@ namespace EbayCrawlerWPF.Model
 
         public static MySqlConnection EstablishConn()
         {
-            string server = "localhost";
-            string database = "lootcrate";
-            string uid = "lienert";
-            string password = "wachtwoord";
-
             /*
             string server = "185.182.56.105";
             string database = "lienesv171_crawler";
             string uid = "lienesv171_crawler";
             string password = "123456789";
+            
+            string server = "localhost";
+            string database = "lootcrate";
+            string uid = "lienert";
+            string password = "wachtwoord";
+
             */
+            string server = "192.168.1.2";
+            string database = "lootcrate";
+            string uid = "lienert";
+            string password = "wachtwoord";
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
             MySqlConnection conn = new MySqlConnection(connectionString);
             conn.Open();
-            //Console.WriteLine("Connection with Db established");
+
+            //Console.WriteLine("ServerVersion: " + conn.ServerVersion +"\nState: " + conn.State.ToString());
             return conn;
         }
 
