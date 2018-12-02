@@ -184,7 +184,7 @@ namespace EbayCrawlerWPF.Model
         {
             /*
             string server = "localhost";
-            string database = "lootcrate";
+            string database = "ebaycrawler";
             string uid = "lienert";
             string password = "wachtwoord";
             */

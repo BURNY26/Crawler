@@ -24,7 +24,7 @@ namespace EbayCrawlerWPF.Controllers
 
         private void FetchSearchRequests(string path)
         {
-             _jsonurls = (ArrayOfJsonurl) DataAccess.XmlDataAccess.ReadFromXml<ArrayOfJsonurl>(path);
+             _jsonurls = (ArrayOfJsonurl) DataAccess.XmlDataAccess.ReadXmlFile<ArrayOfJsonurl>(path);
         }
 
         public SearchRequest GetSearchRequest(int id)

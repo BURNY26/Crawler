@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="amountofpages" xml:space="preserve">
-    <value>10</value>
+    <value>1</value>
     <comment>amount of pages to fetch from each site,-1 for as long as you can</comment>
   </data>
   <data name="europerdollar" xml:space="preserve">
