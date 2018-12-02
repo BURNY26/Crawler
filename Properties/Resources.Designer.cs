@@ -61,7 +61,7 @@ namespace EbayCrawlerWPF.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 50.
+        ///   Looks up a localized string similar to 10.
         /// </summary>
         internal static string amountofpages {
             get {

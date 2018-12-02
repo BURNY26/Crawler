@@ -137,11 +137,12 @@ namespace EbayCrawlerWPF.Controllers
 
         public void ShowHits()
         {
+            Console.WriteLine("#####################Showhits######################");
             foreach (KeyValuePair<int, Dictionary<EbayItem, Double>> entry in _hitpercentages)
             {
                 foreach (KeyValuePair<EbayItem, Double> entry2 in entry.Value)
                 {
-                    if (entry2.Value>0.7)
+                    if (entry2.Value>=0.5)
                     {
                         Console.WriteLine("Hit on request #"+entry.Key);
                         Console.WriteLine(entry2.Key.Title);
@@ -149,6 +150,7 @@ namespace EbayCrawlerWPF.Controllers
                     }
                 }
             }
+            Console.WriteLine("#####################END-Showhits######################");
         }
 
         public void ShowcaseScore()
