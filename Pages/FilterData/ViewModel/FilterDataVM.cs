@@ -1,6 +1,5 @@
-﻿
-using System;
-using System.Windows.Data;
+﻿using System;
+using EbayCrawlerWPF.Model;
 using EbayCrawlerWPF.model;
 using System.ComponentModel;
 using EbayCrawlerWPF.Messages;
@@ -8,13 +7,17 @@ using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.ObjectModel;
-using EbayCrawlerWPF.Model;
 
 namespace EbayCrawlerWPF.SearchItems.ViewModel
 {
     public class FilterDataVM : INotifyPropertyChanged
     {
         public RelayCommand StartSearchCommand
+        {
+            get; set;
+        }
+
+        public RelayCommand OpenSelectedEbayItemInBrowser
         {
             get; set;
         }
@@ -51,50 +54,57 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
                 {
                     return;
                 }
-                
+
                 _hasToSearchForFullWords = value;
                 OnPropertyChanged(nameof(HasToSearchForFullWords));
             }
         }
-        
+
         //the collection, namechange required!
-        private ObservableCollection<EbayItem> _entityCollection;
-        public ObservableCollection<EbayItem> EntityCollection
+        private ObservableCollection<EbayItem> _ebayItemsToDisplay;
+        public ObservableCollection<EbayItem> EbayItemsToDisplay
         {
             get
             {
-                return _entityCollection;
+                return _ebayItemsToDisplay;
             }
             set
             {
-                _entityCollection = value;
+                if (_ebayItemsToDisplay == value)
+                {
+                    return;
+                }
 
-                OnPropertyChanged(nameof(EntityCollection));
-                //OnPropertyChanged(nameof(CollectionView));
+                _ebayItemsToDisplay = value;
+                OnPropertyChanged(nameof(EbayItemsToDisplay));
             }
         }
 
-        /*private CollectionView _collectionView;
-        public CollectionView CollectionView
+        private EbayItem _selectedEbayItem;
+        public EbayItem SelectedEbayItem
         {
             get
             {
-                _collectionView = (CollectionView)CollectionViewSource.GetDefaultView(EntityCollection);
-
-                if (_collectionView != null)
+                return _selectedEbayItem;
+            }
+            set
+            {
+                if (_selectedEbayItem == value)
                 {
-                    _collectionView.SortDescriptions.Add(new SortDescription("PropertyName", ListSortDirection.Ascending));
+                    return;
                 }
 
-                return _collectionView;
+                _selectedEbayItem = value;
+                OnPropertyChanged(nameof(SelectedEbayItem));
             }
-        }*/
+        }
 
         public FilterDataVM()
         {
             Messenger.Default.Register<SearchMessage>(this, (message) => OnSearchMessageReceived(message));
 
             StartSearchCommand = new RelayCommand(() => OnStartSearch());
+            OpenSelectedEbayItemInBrowser = new RelayCommand(() => OnOpenSelectedEbayItemInBrowserClicked());
         }
 
         private void OnSearchMessageReceived(SearchMessage message)
@@ -109,18 +119,34 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
 
         private void SearchItems(string keywords)
         {
-            ShowTestData(DbController.FindItemsByKeywords(HasToSearchForFullWords, keywords));
+            ShowEbayItems(DbController.FindItemsByKeywords(HasToSearchForFullWords, keywords));
         }
 
-        private void ShowTestData(List<EbayItem> ebayItems)
+        private void OnOpenSelectedEbayItemInBrowserClicked()
         {
-            if (ebayItems == null)
+            if (SelectedEbayItem == null)
             {
-                Console.WriteLine("no items found");
                 return;
             }
 
-            EntityCollection = new ObservableCollection<EbayItem>(ebayItems);
+            // Open link to ebayitem in default browser
+            System.Diagnostics.Process.Start(SelectedEbayItem.Url);
+        }
+
+        private void ShowEbayItems(List<EbayItem> ebayItems)
+        {
+            var listToDisplay = new ObservableCollection<EbayItem>();
+
+            if (ebayItems == null)
+            {
+                Console.WriteLine("no items found");
+            }
+            else
+            {
+                listToDisplay = new ObservableCollection<EbayItem>(ebayItems);
+            }
+
+            EbayItemsToDisplay = listToDisplay;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

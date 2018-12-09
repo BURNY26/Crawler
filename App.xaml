@@ -7,10 +7,12 @@
     d1p1:Ignorable="d"
     xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
     StartupUri="Pages/MainWindow/View/MainWindow.xaml"
-    >
+    xmlns:cv="clr-namespace:EbayCrawlerWPF.Converters">
+
     <Application.Resources>
         <ResourceDictionary>
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:EbayCrawlerWPF.ViewModel" />
+            <cv:AbsoluteUrlToBitmapConverter x:Key="AbsoluteUrlToBitmapConverter"></cv:AbsoluteUrlToBitmapConverter>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
