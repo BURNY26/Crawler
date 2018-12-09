@@ -1,6 +1,5 @@
-﻿
-using System;
-using System.Windows.Data;
+﻿using System;
+using EbayCrawlerWPF.Model;
 using EbayCrawlerWPF.model;
 using System.ComponentModel;
 using EbayCrawlerWPF.Messages;
@@ -8,7 +7,6 @@ using GalaSoft.MvvmLight.Command;
 using System.Collections.Generic;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.ObjectModel;
-using EbayCrawlerWPF.Model;
 
 namespace EbayCrawlerWPF.SearchItems.ViewModel
 {
@@ -51,44 +49,27 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
                 {
                     return;
                 }
-                
+
                 _hasToSearchForFullWords = value;
                 OnPropertyChanged(nameof(HasToSearchForFullWords));
             }
         }
-        
+
         //the collection, namechange required!
-        private ObservableCollection<EbayItem> _entityCollection;
-        public ObservableCollection<EbayItem> EntityCollection
+        private ObservableCollection<EbayItem> _ebayItemsToDisplay;
+        public ObservableCollection<EbayItem> EbayItemsToDisplay
         {
             get
             {
-                return _entityCollection;
+                return _ebayItemsToDisplay;
             }
             set
             {
-                _entityCollection = value;
+                _ebayItemsToDisplay = value;
 
-                OnPropertyChanged(nameof(EntityCollection));
-                //OnPropertyChanged(nameof(CollectionView));
+                OnPropertyChanged(nameof(EbayItemsToDisplay));
             }
         }
-
-        /*private CollectionView _collectionView;
-        public CollectionView CollectionView
-        {
-            get
-            {
-                _collectionView = (CollectionView)CollectionViewSource.GetDefaultView(EntityCollection);
-
-                if (_collectionView != null)
-                {
-                    _collectionView.SortDescriptions.Add(new SortDescription("PropertyName", ListSortDirection.Ascending));
-                }
-
-                return _collectionView;
-            }
-        }*/
 
         public FilterDataVM()
         {
@@ -120,7 +101,7 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
                 return;
             }
 
-            EntityCollection = new ObservableCollection<EbayItem>(ebayItems);
+            EbayItemsToDisplay = new ObservableCollection<EbayItem>(ebayItems);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
