@@ -65,7 +65,7 @@ namespace EbayCrawlerWPF.model
         public static String ExtractPicUrl(string line)
         {
             string lineabbrev = Regex.Replace(line, @"\t|\n|\r", "");
-            string pattern = "=\"([^\"]*jpg)";
+            string pattern = "=\"([^\"]*\\.jpg)";
             Regex rgx = new Regex(pattern, RegexOptions.Singleline);
             MatchCollection matches = rgx.Matches(lineabbrev.TrimStart());
             if (matches.Count > 0)
@@ -82,8 +82,8 @@ namespace EbayCrawlerWPF.model
         {
             string lineabbrev = Regex.Replace(line, @"\t|\n|\r", "");
             lineabbrev = Regex.Replace(lineabbrev, @",", "");
-            lineabbrev = Regex.Replace(lineabbrev, @"\.", ",");
-            string pattern = "\\$(\\d+,\\d+)\\sshipping";
+            //lineabbrev = Regex.Replace(lineabbrev, @"\.", ",");
+            string pattern = "\\$(\\d+\\.\\d+)\\sshipping";
             Regex rgx = new Regex(pattern, RegexOptions.Singleline);
             MatchCollection matches = rgx.Matches(lineabbrev.TrimStart());
             if (matches.Count > 0)
@@ -176,8 +176,7 @@ namespace EbayCrawlerWPF.model
         {
             string lineabbrev = Regex.Replace(line, @"\t|\n|\r", "");
             lineabbrev = Regex.Replace(lineabbrev, @",", "");
-            lineabbrev = Regex.Replace(lineabbrev, @"\.", ",");
-            string pattern = "^\\$(\\d+,\\d+)";
+            string pattern = "^\\$(\\d+\\.\\d+)";
             Regex rgx = new Regex(pattern, RegexOptions.Singleline);
             MatchCollection matches = rgx.Matches(lineabbrev.TrimStart());
             if (matches.Count > 0)
@@ -193,9 +192,8 @@ namespace EbayCrawlerWPF.model
         public static string ExtractEbayComEndPrice(string line)
         {
             string lineabbrev = Regex.Replace(line, @"\t|\n|\r", "");
-            lineabbrev = Regex.Replace(lineabbrev, @",", "");
-            lineabbrev = Regex.Replace(lineabbrev, @"\.", ",");
-            string pattern = "to \\$(\\d+,\\d+)";
+            lineabbrev = Regex.Replace(lineabbrev, @",", "");            
+            string pattern = "to \\$(\\d+\\.\\d+)";
             Regex rgx = new Regex(pattern, RegexOptions.Singleline);
             MatchCollection matches = rgx.Matches(lineabbrev.TrimStart());
             if (matches.Count > 0)

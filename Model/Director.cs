@@ -1,13 +1,14 @@
 ﻿using System;
 using EbayCrawlerWPF.model;
 using System.Configuration;
-using EbayCrawlerWPF.AppConfig;
 using System.Diagnostics;
-using static EbayCrawlerWPF.AppConfig.SitesSection;
 using System.Resources;
 using System.Reflection;
 using System.Collections.Generic;
 using EbayCrawlerWPF.Controllers.Grimms;
+using System.IO;
+using EbayCrawlerWPF.Controllers;
+using System.ComponentModel;
 
 namespace EbayCrawlerWPF.Model
 {
@@ -15,58 +16,59 @@ namespace EbayCrawlerWPF.Model
     { 
         private List<AGrimm> _grimms;
         private int _numberOfPagesToFetch = -1;
-
+        public SearchRequestHandler sr;
         public Director()
         {
-            _grimms = new List<AGrimm>();
-            _grimms.Add(EbayBeGrimm.GetInstance());
-            _grimms.Add(EbayCoUkGrimm.GetInstance());
-            _grimms.Add(EbayComGrimm.GetInstance());
             _numberOfPagesToFetch = int.Parse(EbayCrawlerWPF.Properties.Resources.amountofpages);
+            string directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EbayCrawler");
+            string filepath = Path.Combine(directoryPath, EbayCrawlerWPF.Properties.Resources.requestsfile);
+            _grimms = new List<AGrimm>();
+             sr = new SearchRequestHandler(filepath);
+            _grimms.Add(EbayBeGrimm.GetInstance(sr));
+            _grimms.Add(EbayCoUkGrimm.GetInstance(sr));
+            _grimms.Add(EbayComGrimm.GetInstance(sr));            
         }
 
         public void Boot()
         {
             foreach(AGrimm g in _grimms)
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
                 try{
                     g.Loop(_numberOfPagesToFetch);
-                    sw.Stop();
                     
                     foreach (KeyValuePair<String, List<EbayItem>> entry in g.GetItemsList())
                     {
-                        int newitems = DbController.AddEbayItemsToDB(entry.Value);
-                        DbController.AddMetadata(entry.Key, null, g.GetType().Name, newitems, null);
-                    }
+                        BackgroundWorker worker = new BackgroundWorker();
+                        worker.DoWork += new DoWorkEventHandler(AsyncSendEbayItemsToDb);
+                        //verschrikkelijk lelijke manier om 3 args te kunnen meegeven aan de workermethode
+                        EbayItem ei = new EbayItem();
+                        ei.Title = g.GetType().Name;
+                        ei.Url = entry.Key;
+                        Tuple<EbayItem, List<EbayItem>> t = new Tuple<EbayItem, List<EbayItem>>(ei, entry.Value);
+                        worker.RunWorkerAsync(argument: t );
+                   }
                     
                 } catch(Exception e)
                 {
-                    Console.WriteLine("wegschrijving tabel bij fout ");
-                    sw.Stop();
+                    Console.WriteLine("Error during crawling, writing items to csv");
                     foreach (KeyValuePair<String, List<EbayItem>> entry in g.GetItemsList())
                     {
-                        int newitems = DbController.AddEbayItemsToDB(entry.Value);
-                        DbController.AddMetadata(entry.Key, null, g.GetType().Name, newitems, null);
+                        DateTime now = DateTime.Now;
+                        CsvController.CreateDocument(entry.Value, now+".csv");
+                        Console.WriteLine(now+".csv created"); 
                     }
                 }
             }      
         }
 
-        private String DetermineDuration(TimeSpan ts, String text)
+        private void AsyncSendEbayItemsToDb(object sender, DoWorkEventArgs e)
         {
-            // Format and display the TimeSpan value.
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                ts.Hours, ts.Minutes, ts.Seconds,
-                ts.Milliseconds / 10);
-            Console.WriteLine("RunTime " + text + " => " + elapsedTime);
-            return elapsedTime;
+            Console.WriteLine("Sending items async" );
+            Tuple<EbayItem, List<EbayItem>> l = (Tuple<EbayItem, List<EbayItem>>) e.Argument;
+            int numberofItemsAdded = DbController.AddEbayItemsToDB(l.Item2);
+            DbController.AddMetadata(l.Item1.Url, null, l.Item1.Title, numberofItemsAdded, null);
+            Console.WriteLine("Stop sending items async");
         }
 
-        public void ExportHtmlToCsv(string htmlfile, string csvfilename)
-        {
-
-        }
     }
 }

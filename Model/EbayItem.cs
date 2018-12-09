@@ -16,11 +16,13 @@ namespace EbayCrawlerWPF.model
 
         public string Title
         {
+            set;
             get;
         }
 
         public string Url
         {
+            set;
             get;
         }
 

@@ -1,4 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows;
+using System.Xml;
+using System.Xml.Serialization;
 using EbayCrawlerWPF.Model;
 using EbayCrawlerWPF.Controllers.Settings;
 
@@ -10,12 +15,16 @@ namespace EbayCrawlerWPF
 
         public MainWindow()
         {
+            /*
             InitializeComponent();
 
             if (_director == null)
             {
                 _director = new Director();
             }
+            */
+
+            
         }
 
         private void OnRunCrawlButtonClick(object sender, RoutedEventArgs e)
