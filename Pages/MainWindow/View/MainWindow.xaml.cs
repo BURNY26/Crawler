@@ -35,7 +35,6 @@ namespace EbayCrawlerWPF
             }
 
             _director.Boot();
-            _director.sr.ShowHits();
         }
     }
 }

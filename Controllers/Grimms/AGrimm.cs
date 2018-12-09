@@ -84,7 +84,7 @@ namespace EbayCrawlerWPF.Controllers.Grimms
                     foreach (String s in entry.Value)
                     {
                         String starturl = s;
-                        while (starturl != null && checkingPageIndex != lastpage + 1)
+                        while (starturl != null && checkingPageIndex != lastpage + 1 && checkingPageIndex<200)
                         {
                             Console.WriteLine(this.GetType().Name + " checking " + starturl);
 
@@ -93,7 +93,7 @@ namespace EbayCrawlerWPF.Controllers.Grimms
 
                             CreateDocument(content, filename);                            
                             list.AddRange(CreateItems(filename));
-                            _handler.ProcessResults(list, key);
+                            _handler.ProcessItemsAgainstAllSearchRequestsFromJsonurl(list, key);
                             Console.WriteLine(this.GetType().Name + " finished reading page " + checkingPageIndex);
                             starturl = NextPage(starturl, checkingPageIndex);
                             checkingPageIndex++;

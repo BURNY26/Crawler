@@ -4,6 +4,7 @@ using EbayCrawlerWPF.model;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using EbayCrawlerWPF.Controllers.Settings;
+using System.Data;
 
 namespace EbayCrawlerWPF.Model
 {
@@ -189,16 +190,6 @@ namespace EbayCrawlerWPF.Model
             string password = "wachtwoord";
             */
 
-            /*
-            string server = "185.182.56.105";
-            string database = "lienesv171_crawler";
-            string uid = "lienesv171_crawler";
-            string password = "123456789";
-            */
-            string server = "192.168.1.2";
-            string database = "lootcrate";
-            string uid = "lienert";
-            string password = "wachtwoord";
             string connectionString;
             connectionString = "SERVER=" + SettingsController.Settings.DatabaseUrl + ";" + "DATABASE=" +
             SettingsController.Settings.DatabaseName + ";" + "UID=" + SettingsController.Settings.DatabaseUsername + ";" + "PASSWORD=" + SettingsController.Settings.DatabasePassword + ";";
@@ -208,8 +199,6 @@ namespace EbayCrawlerWPF.Model
             //Console.WriteLine("Connection with Db established");
             return conn;
         }
-
-
 
         public static void AddEbayItemToDB(EbayItem ei)
         {
@@ -264,6 +253,7 @@ namespace EbayCrawlerWPF.Model
                         }
                         conn.Close();
                     }
+                    
                     else
                     {
                         query = "update lootcrate.ebay set startprice='" + (Int32)ei.Startprice
@@ -277,7 +267,6 @@ namespace EbayCrawlerWPF.Model
                         comm.ExecuteNonQuery();
                         conn.Close();
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -314,5 +303,210 @@ namespace EbayCrawlerWPF.Model
             Console.WriteLine("Finished writing metadata to DB. ");
             conn.Close();
         }
+
+        public static Dictionary<string,int> FetchItemIdsFromSearchRequestDb(int SearchRequestid)
+        {
+            Dictionary<string, int> map = new Dictionary<string, int>();
+            MySqlConnection conn = EstablishConn();
+            string query = "select itemid,present from lootcrate.SR"+SearchRequestid+";";
+            MySqlCommand comm = new MySqlCommand(query, conn);
+            comm.CommandTimeout = 0;
+            MySqlDataReader dataReader = comm.ExecuteReader();
+            Boolean hasrows = dataReader.HasRows;
+
+            if (hasrows == false)
+            {
+                dataReader.Close();
+                conn.Close();
+                return null;
+            }
+            else
+            {
+                while (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        map.Add(dataReader.GetString(0), dataReader.GetInt16(1));
+                    }
+                    dataReader.NextResult();
+                }
+            }
+            dataReader.Close();
+            conn.Close();
+            return map;
+        }
+
+        public static void AttachEbayitemToSearchRequest(int searchrequestid ,string ebayitemid,int sameitem)
+        {
+            String query;
+            MySqlCommand comm;
+            MySqlConnection conn = EstablishConn();
+            try
+            {
+                query = "insert into lootcrate.SR"+searchrequestid+"(itemid,present) " +
+                        "values ('" + ebayitemid + "','" + sameitem+ "');";
+                comm = new MySqlCommand(query, conn);
+                comm.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);         
+            }
+         
+            conn.Close();
+        }
+
+        public static void CreateSearchRequestTable(int SearchRequestId)
+        {
+            MySqlConnection conn = EstablishConn();
+            try
+            {
+                String query = "CREATE TABLE lootcrate.SR" + SearchRequestId + "( itemid varchar(255), present tinyint(1));";                
+                MySqlCommand comm = new MySqlCommand(query, conn);
+                comm.ExecuteNonQuery();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                conn.Close();
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("Error : trying to create Table"+SearchRequestId+" in searchrequestlinkdb.");
+            }
+        }
+
+        public static void DeleteSearchRequestTable(int SearchRequestId)
+        {
+            MySqlConnection conn = EstablishConn();
+            try
+            {
+                String query = "DROP TABLE lootcrate.SR" + SearchRequestId+";" ;
+                MySqlCommand comm = new MySqlCommand(query, conn);
+                comm.ExecuteNonQuery();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                conn.Close();
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("Error : trying to create Table" + SearchRequestId + " in searchrequestlinkdb.");
+            }
+        }
+        /*
+        public static void AddColumnToSearchRequestDb(int SearchRequestId)
+        {
+            MySqlConnection conn = EstablishConn();
+            try
+            {
+                String query = "ALTER TABLE lootcrate.searchrequestlink ADD COLUMN searchrequest" + SearchRequestId + " BOOLEAN AFTER itemid";
+
+                MySqlCommand comm = new MySqlCommand(query, conn);
+                comm.ExecuteNonQuery();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                conn.Close();
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("Error : trying to create column in searchrequestlinkdb.");                
+            }
+        }
+
+        public static void DropColumnFromSearchRequestDb(int SearchRequestId)
+        {
+            MySqlConnection conn = EstablishConn();
+            try
+            {
+                String query = "ALTER TABLE lootcrate.searchrequestlink DROP COLUMN searchrequest" + SearchRequestId;
+
+                MySqlCommand comm = new MySqlCommand(query, conn);
+                comm.ExecuteNonQuery();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                conn.Close();
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("Error : trying to drop column in searchrequestlinkdb.");
+            }
+        }
+
+        public static void GetAllColumnNames(string dbname)
+        {
+            DataTable schema = null;
+            using (MySqlConnection con = EstablishConn())
+            {
+                using (var schemaCommand = new MySql.Data.MySqlClient.MySqlCommand("SELECT * FROM lootcrate."+ dbname, con))
+                {
+                    using (var reader = schemaCommand.ExecuteReader(CommandBehavior.SchemaOnly))
+                    {
+                        schema = reader.GetSchemaTable();
+                    }
+                }
+            }
+            
+            foreach (DataRow col in schema.Rows)
+            {
+                Console.WriteLine( col.Field<String>("ColumnName"));                
+            }            
+        }
+
+        public static List<string> FetchItemIdsFromSearchRequestDb()
+        {
+            MySqlConnection conn = EstablishConn();
+            string query = "select itemid from lootcrate.searchrequestlink;";
+            List<string> list = new List<string>();
+            MySqlCommand comm = new MySqlCommand(query, conn);
+            comm.CommandTimeout = 0;
+            MySqlDataReader dataReader = comm.ExecuteReader();
+            Boolean hasrows = dataReader.HasRows;
+
+            if (hasrows == false)
+            {
+                dataReader.Close();
+                conn.Close();
+                return null;
+            }
+            else
+            {
+                while (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        list.Add(dataReader.GetString(0));
+                    }
+                    dataReader.NextResult();
+                }
+            }
+            dataReader.Close();
+            conn.Close();
+            return list;
+        }
+
+        public static void ExcludeEbayItemFromSearchRequest(int SearchRequestId,string ebayitemid)
+        {
+            
+        }
+
+        public static void IncludeEbayItemInSearchRequest(int SearchRequestId, string ebayitemid)
+        {
+
+        }
+
+        public void ExcludeAssignedItems(int NewSearchRequestId)
+        {
+            //alle items ophalen die al een positieve toekenning hebben gekregen op een id
+            /*
+             * 
+             * UPDATE table_name SET column1 = value1, column2 = value2, ...WHERE condition;
+             * 
+             * 
+
+        }*/
+    
     }
 }

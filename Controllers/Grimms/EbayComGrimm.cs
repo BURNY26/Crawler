@@ -56,17 +56,16 @@ namespace EbayCrawlerWPF.Model
                             clock = TextExtractorEbayCom.ExtractEbayComTimeLeft(n.OuterHtml,DateTime.Now);
                         }
                     }
-                    double exchange = Double.Parse(Properties.Resources.europerdollar);
-                    
+                    double exchange = Double.Parse((Properties.Resources.europerdollar).Replace(',','.'));
                     string price = node.SelectSingleNode("descendant::span[contains(@class,'s-item__price')]").InnerText;
                     double startPrice = exchange * Double.Parse(TextExtractorEbayCom.ExtractEbayComStartPrice(price));
                     double endPrice = exchange * Double.Parse(TextExtractorEbayCom.ExtractEbayComEndPrice(price));
+                    
                     double shipping = 0;
                     if (node.InnerHtml.Contains("shipping"))
                     {
                         shipping = exchange * TextExtractorEbayCom.ExtractShipping(node.SelectSingleNode("descendant::span[contains(@class,'s-item__shipping s-item__logisticsCost')]").InnerText);
                     }
-                    
                     if (startPrice > 0)
                     {
                         ei = new EbayItem(startPrice, endPrice, title, itemlink, itemid, clock, followers, shipping, location, piclink);
@@ -107,7 +106,9 @@ namespace EbayCrawlerWPF.Model
         }
         public String GetTitle(HtmlNode node)
         {
-            return (node.SelectSingleNode("div/div[1]/div/a/div/img")).Attributes["alt"].DeEntitizeValue;
+            string a= (node.SelectSingleNode("div/div[1]/div/a/div/img")).Attributes["alt"].DeEntitizeValue;
+            a = a.Replace("'", "''");
+            return a;
         }
         public String GetImageLink(HtmlNode node)
         {            

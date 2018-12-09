@@ -2,6 +2,7 @@
 using EbayCrawlerWPF.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace EbayCrawlerWPF.Controllers
     public class SearchRequestHandler
     {
         private int _idCounter = -1;
+        private double _hitThreshold = 0.5;
+        private List<EbayItem> dbcache;
         
         private Dictionary<int, Dictionary<EbayItem, double>> _hitpercentages;
         public ArrayOfJsonurl _jsonurls;
@@ -74,14 +77,17 @@ namespace EbayCrawlerWPF.Controllers
 
         public void UpdateSearchRequest(SearchRequest s)
         {
+            DbController.DeleteSearchRequestTable(s.Id);
+            DbController.CreateSearchRequestTable(s.Id);
             SearchRequest sr = GetSearchRequest(s.Id);
             sr.PrimaryKeywords = s.PrimaryKeywords;
             sr.SecondaryKeywords = s.SecondaryKeywords;
-            sr.ExclusiveKeywords = s.ExclusiveKeywords;
+            sr.ExclusiveKeywords = s.ExclusiveKeywords;            
         }
 
         public void DeleteSearchRequest(int id)
         {
+            DbController.DeleteSearchRequestTable(id);
             Jsonurl foundjurl=null;
             SearchRequest foundrs=null;
             foreach (Jsonurl jurl in _jsonurls.Jsonurls)
@@ -101,6 +107,7 @@ namespace EbayCrawlerWPF.Controllers
         public void AddSearchRequest(SearchRequest s,string jsonurl_name)
         {
             s.Id = _idCounter + 1;
+            DbController.CreateSearchRequestTable(s.Id);
             Jsonurl jurl = (_jsonurls.Jsonurls.Find(x => x.Name.Equals(jsonurl_name)));
             if (jurl != null)
             {
@@ -113,8 +120,8 @@ namespace EbayCrawlerWPF.Controllers
                 _jsonurls.Jsonurls.Add(jurl);
             }
         }
-        //private Dictionary<int, Dictionary<EbayItem, double>> _hitpercentages;
-        public void ProcessResults(List<EbayItem> list, string jsonurl)
+
+        public void ProcessItemsAgainstAllSearchRequestsFromJsonurl(List<EbayItem> list, string jsonurl)
         {
             foreach(EbayItem ei in list)
             {
@@ -131,8 +138,28 @@ namespace EbayCrawlerWPF.Controllers
                     
                 }
             }
-            //ShowHits();
-            //ShowcaseScore();
+        }
+
+        public void ProcessDbItemsAgainstAllSearchRequestsFromJsonUrl(string jsonurl)
+        {            
+            if (dbcache == null)
+            {
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.DoWork += new DoWorkEventHandler(AsyncFetchDb);
+                worker.DoWork += new DoWorkEventHandler(AsyncProcessItemsAgainstSearchRequests);
+
+                worker.RunWorkerAsync(argument : jsonurl);
+            }
+            else
+            {
+                ProcessItemsAgainstAllSearchRequestsFromJsonurl(dbcache, jsonurl);
+            }
+        }
+
+        private void AsyncProcessItemsAgainstSearchRequests(object sender ,DoWorkEventArgs e)
+        {
+            string jsonurl = (string)e.Argument;
+            ProcessDbItemsAgainstAllSearchRequestsFromJsonUrl(jsonurl);
         }
 
         public void ShowHits()
@@ -142,7 +169,7 @@ namespace EbayCrawlerWPF.Controllers
             {
                 foreach (KeyValuePair<EbayItem, Double> entry2 in entry.Value)
                 {
-                    if (entry2.Value>=0.5)
+                    if (entry2.Value>=_hitThreshold)
                     {
                         Console.WriteLine("Hit on request #"+entry.Key);
                         Console.WriteLine(entry2.Key.Title);
@@ -174,26 +201,48 @@ namespace EbayCrawlerWPF.Controllers
             double numberofsk = sr.SecondaryKeywords.Count;
             foreach(string excl in sr.ExclusiveKeywords)
             {
-                if (ei.Title.ToLower().Split(' ',',').ToList().Contains(excl.ToLower()))
+                List<string> excluded = excl.Split('|').ToList<string>();
+                foreach(string s in excluded)
                 {
-                    return -1;
+                    if (ei.Title.ToLower().Split(' ', ',').ToList().Contains(s.ToLower()))
+                    {
+                        return -1;
+                    }
                 }
+
             }
             foreach(string pk in sr.PrimaryKeywords)
             {
-                if (ei.Title.ToLower().Split(' ', ',').ToList().Contains(pk.ToLower()))
+                List<string> primary = pk.Split('|').ToList<string>();
+                foreach(string s in primary)
                 {
-                    score += 1 / numberofpk;
+                    if (ei.Title.ToLower().Split(' ', ',').ToList().Contains(s.ToLower()))
+                    {
+                        score += 1 / numberofpk;
+                    }
                 }
+
             }
             foreach (string sk in sr.SecondaryKeywords)
             {
-                if (ei.Title.ToLower().Split(' ', ',','.',':').ToList().Contains(sk.ToLower()))
+                List<string> secundary = sk.Split('|').ToList<string>();
+                foreach (string s in secundary)
                 {
-                    score += 1 /(10* numberofsk);
+                    if (ei.Title.ToLower().Split(' ', ',', '.', ':').ToList().Contains(s.ToLower()))
+                    {
+                        score += 1 / (10 * numberofsk);
+                    }
                 }
+
             }
             return score;
         }
+        
+        private void AsyncFetchDb(object sender,DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            dbcache = DbController.ImportFromDB();
+        }
+
     }
 }
