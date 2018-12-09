@@ -17,6 +17,11 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
             get; set;
         }
 
+        public RelayCommand OpenSelectedEbayItemInBrowser
+        {
+            get; set;
+        }
+
         private string _mainSearchBoxText;
         public string MainSearchBoxText
         {
@@ -65,9 +70,32 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
             }
             set
             {
-                _ebayItemsToDisplay = value;
+                if (_ebayItemsToDisplay == value)
+                {
+                    return;
+                }
 
+                _ebayItemsToDisplay = value;
                 OnPropertyChanged(nameof(EbayItemsToDisplay));
+            }
+        }
+
+        private EbayItem _selectedEbayItem;
+        public EbayItem SelectedEbayItem
+        {
+            get
+            {
+                return _selectedEbayItem;
+            }
+            set
+            {
+                if (_selectedEbayItem == value)
+                {
+                    return;
+                }
+
+                _selectedEbayItem = value;
+                OnPropertyChanged(nameof(SelectedEbayItem));
             }
         }
 
@@ -76,6 +104,7 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
             Messenger.Default.Register<SearchMessage>(this, (message) => OnSearchMessageReceived(message));
 
             StartSearchCommand = new RelayCommand(() => OnStartSearch());
+            OpenSelectedEbayItemInBrowser = new RelayCommand(() => OnOpenSelectedEbayItemInBrowserClicked());
         }
 
         private void OnSearchMessageReceived(SearchMessage message)
@@ -90,18 +119,34 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
 
         private void SearchItems(string keywords)
         {
-            ShowTestData(DbController.FindItemsByKeywords(HasToSearchForFullWords, keywords));
+            ShowEbayItems(DbController.FindItemsByKeywords(HasToSearchForFullWords, keywords));
         }
 
-        private void ShowTestData(List<EbayItem> ebayItems)
+        private void OnOpenSelectedEbayItemInBrowserClicked()
         {
-            if (ebayItems == null)
+            if (SelectedEbayItem == null)
             {
-                Console.WriteLine("no items found");
                 return;
             }
 
-            EbayItemsToDisplay = new ObservableCollection<EbayItem>(ebayItems);
+            // Open link to ebayitem in default browser
+            System.Diagnostics.Process.Start(SelectedEbayItem.Url);
+        }
+
+        private void ShowEbayItems(List<EbayItem> ebayItems)
+        {
+            var listToDisplay = new ObservableCollection<EbayItem>();
+
+            if (ebayItems == null)
+            {
+                Console.WriteLine("no items found");
+            }
+            else
+            {
+                listToDisplay = new ObservableCollection<EbayItem>(ebayItems);
+            }
+
+            EbayItemsToDisplay = listToDisplay;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

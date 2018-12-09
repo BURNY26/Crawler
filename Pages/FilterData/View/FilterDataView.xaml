@@ -10,7 +10,7 @@
     Background="White"
     xmlns:fa="http://schemas.fontawesome.io/icons/"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-    >
+    xmlns:UserControls="clr-namespace:EbayCrawlerWPF.Pages.FilterData.View">
 
     <Grid Margin="10">
 
@@ -83,12 +83,70 @@
                 />
         </Grid>
 
-        <!-- DATAGRID -->
-        <DataGrid
+        <!-- LIST & DETAILVIEW -->
+        <Grid
             Grid.Row="2"
-            ItemsSource="{Binding Path=EbayItemsToDisplay}"
-            Margin="0,2,0,0">
-        </DataGrid>
+            Margin="0,1,0,1"
+            >
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LISTVIEW -->
+            <ListBox
+                ItemsSource="{Binding Path=EbayItemsToDisplay}"
+                SelectedItem="{Binding Path=SelectedEbayItem, Mode=TwoWay}"  
+                >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <UserControls:EbayItemFilterUC />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- DETAILVIEW -->
+            <Grid
+                Grid.Column="1" >
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!-- IMAGE -->
+                <Image
+                    Grid.Row="0"
+                    Source="{Binding Path=SelectedEbayItem.PictureUrl, Converter={StaticResource AbsoluteUrlToBitmapConverter}}"/>
+
+                <!-- TITLE & LINK -->
+                <Grid
+                    Grid.Row="1" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="24"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- TITLE -->
+                    <Label 
+                    Grid.Column="0"
+                    Content="{Binding Path=SelectedEbayItem.Title}" />
+                    
+                    <!-- BUTTON -->
+                    <Button 
+                        Grid.Column="1"
+                        Height="24"
+                        VerticalAlignment="Top"
+                        Command="{Binding OpenSelectedEbayItemInBrowser}">
+                        <fa:ImageAwesome Icon="ExternalLink" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
+                    </Button>
+
+                </Grid>
+            </Grid>
+        </Grid>
 
     </Grid>
 

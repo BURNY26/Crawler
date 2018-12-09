@@ -89,6 +89,7 @@
     <Compile Include="Controllers\Settings\SettingsController.cs" />
     <Compile Include="Controllers\TextExtractors\TextExtractorEbay.cs" />
     <Compile Include="Controllers\TextExtractors\TextExtractorEbayCoUk.cs" />
+    <Compile Include="Converters\AbsoluteUrlToBitmapConverter.cs" />
     <Compile Include="DataAccess\XmlDataAccess.cs" />
     <Compile Include="Messages\CloseSettingsWindowMessage.cs" />
     <Compile Include="Messages\NavigatePageMessage.cs" />
@@ -109,6 +110,9 @@
     <Compile Include="Pages\Crawler\View\CrawlerView.xaml.cs">
       <DependentUpon>CrawlerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\FilterData\View\EbayItemFilterUC.xaml.cs">
+      <DependentUpon>EbayItemFilterUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Home\ViewModel\HomeVM.cs" />
     <Compile Include="Pages\Home\View\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -118,6 +122,10 @@
       <DependentUpon>FilterDataView.xaml</DependentUpon>
     </Compile>
     <Page Include="Pages\Crawler\View\CrawlerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\FilterData\View\EbayItemFilterUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
