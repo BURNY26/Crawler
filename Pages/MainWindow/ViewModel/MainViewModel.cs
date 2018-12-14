@@ -3,6 +3,7 @@ using EbayCrawlerWPF.Messages;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using EbayCrawlerWPF.Pages.SettingsPanel.View;
+using EbayCrawlerWPF.Model;
 
 namespace EbayCrawlerWPF.ViewModel
 {
@@ -30,6 +31,8 @@ namespace EbayCrawlerWPF.ViewModel
 
         private void OnWindowLoaded()
         {
+            Director.Boot();
+
             GoToHomePage();
         }
 
