@@ -38,7 +38,17 @@
 
             <ComboBox 
                 Grid.Column="1" 
-                />
+                ItemsSource="{Binding Path=AllSearchRequests}"
+                SelectedItem="{Binding Path=SelectedSearchRequest , Mode=TwoWay}"  
+                >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <UserControls:FilterSearchRequestUC />
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
 
         </Grid>
 
@@ -134,7 +144,7 @@
                     <Label 
                     Grid.Column="0"
                     Content="{Binding Path=SelectedEbayItem.Title}" />
-                    
+
                     <!-- BUTTON -->
                     <Button 
                         Grid.Column="1"

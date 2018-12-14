@@ -52,15 +52,7 @@
                     <fa:ImageAwesome Icon="Wrench" Height="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
                 </Button.Content>
             </Button>
-        </Grid> 
-
-        <Button
-            Width="70" 
-            HorizontalAlignment="Right"
-            Content="Run Crawl" 
-            Click="OnRunCrawlButtonClick"
-            Margin="0,2,35,2"
-            />
+        </Grid>
 
         <ContentControl
             Name="ContentControl"

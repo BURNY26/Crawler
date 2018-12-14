@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace EbayCrawlerWPF.SearchItems.ViewModel
 {
-    public class FilterDataVM : INotifyPropertyChanged
+    public class FilterDataVM : INotifyPropertyChanged, IDisposable
     {
         public RelayCommand StartSearchCommand
         {
@@ -20,6 +20,44 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
         public RelayCommand OpenSelectedEbayItemInBrowser
         {
             get; set;
+        }
+
+        private List<SearchRequest> _allSearchRequests;
+        public List<SearchRequest> AllSearchRequests
+        {
+            get
+            {
+                return _allSearchRequests;
+            }
+            set
+            {
+                if (value == _allSearchRequests)
+                {
+                    return;
+                }
+
+                _allSearchRequests = value;
+                OnPropertyChanged(nameof(AllSearchRequests));
+            }
+        }
+
+        private SearchRequest _selectedSearchRequest;
+        public SearchRequest SelectedSearchRequest
+        {
+            get
+            {
+                return _selectedSearchRequest;
+            }
+            set
+            {
+                if (value == _selectedSearchRequest)
+                {
+                    return;
+                }
+
+                _selectedSearchRequest = value;
+                OnPropertyChanged(nameof(SelectedSearchRequest));
+            }
         }
 
         private string _mainSearchBoxText;
@@ -105,6 +143,15 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
 
             StartSearchCommand = new RelayCommand(() => OnStartSearch());
             OpenSelectedEbayItemInBrowser = new RelayCommand(() => OnOpenSelectedEbayItemInBrowserClicked());
+            Director.PropertyChanged += Director_PropertyChanged;
+
+            PopulateAllSearchRequests();
+        }
+
+        public void Dispose()
+        {
+            Messenger.Default.Unregister<SearchMessage>(this, (message) => OnSearchMessageReceived(message));
+            Director.PropertyChanged -= Director_PropertyChanged;
         }
 
         private void OnSearchMessageReceived(SearchMessage message)
@@ -131,6 +178,19 @@ namespace EbayCrawlerWPF.SearchItems.ViewModel
 
             // Open link to ebayitem in default browser
             System.Diagnostics.Process.Start(SelectedEbayItem.Url);
+        }
+
+        private void Director_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Director.SearchRequestHandler))
+            {
+                PopulateAllSearchRequests();
+            }
+        }
+
+        private void PopulateAllSearchRequests()
+        {
+            AllSearchRequests = Director.SearchRequestHandler?.GetAllSearchRequests();
         }
 
         private void ShowEbayItems(List<EbayItem> ebayItems)

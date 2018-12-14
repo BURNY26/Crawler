@@ -113,6 +113,9 @@
     <Compile Include="Pages\FilterData\View\EbayItemFilterUC.xaml.cs">
       <DependentUpon>EbayItemFilterUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\FilterData\View\FilterSearchRequestUC.xaml.cs">
+      <DependentUpon>FilterSearchRequestUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Home\ViewModel\HomeVM.cs" />
     <Compile Include="Pages\Home\View\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -126,6 +129,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\FilterData\View\EbayItemFilterUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\FilterData\View\FilterSearchRequestUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
